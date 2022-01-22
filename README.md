@@ -10,7 +10,6 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 
 [![Discord Bots](https://top.gg/api/widget/851246867131793469.svg)](https://top.gg/bot/851246867131793469)
 
-
 ## FAQ
 
 ---
