@@ -1,0 +1,31 @@
+[flake8]
+min_python_version = 3.10.1
+ban-relative-imports = true
+mypy-init-return = true
+format-greedy = 1
+enable-extensions = TC, TC2
+type-checking-exempt-modules = typing, typing-extensions
+eradicate-whitelist-extend = ^-.*;
+extend-ignore =
+    E501,
+    E203,
+    SIM106,
+    ANN101,
+    ANN102,
+    F722,
+per-file-ignores =
+    __init__.py:F401,TC002,
+    tests/test_*:ANN201
+    tests/**/test_*:ANN201
+extend-exclude =
+    get-poetry.py,
+    install-poetry.py,
+    tests/fixtures/*,
+    tests/**/fixtures/*,
+exclude =
+    venv/
+    .vscode/
+    .history/
+    .git/
+    __pycache__
+    .idea/
