@@ -4,8 +4,6 @@ A simple bot which using an API , detects reported discord scams and kicks the u
 
 ## How to Use?
 
----
-
 Simply add the bot to your server and you're done, make sure that the bot has permissions to manage messages and kick users. </br>
 
 [Click here](https://discord.com/api/oauth2/authorize?client_id=851246867131793469&permissions=9218&scope=bot) to add to your server directly.
@@ -14,8 +12,6 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 
 
 ## FAQ
-
----
 
 <details closed>
 <summary> Is there a way to check if it works without kicking? </summary>
@@ -59,7 +55,5 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 <br>
 
 ## License
-
----
 
 ScamKicker is developed and distributed under the Apache 2.0 license.
