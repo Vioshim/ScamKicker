@@ -8,6 +8,8 @@ A simple bot which using an API , detects reported discord scams and kicks the u
 
 Simply add the bot to your server and you're done, make sure that the bot has permissions to manage messages and kick users.
 
+[Click me to invite bot to your server.](https://discord.com/api/oauth2/authorize?client_id=851246867131793469&permissions=9218&scope=bot)
+
 ## FAQ
 
 ---
