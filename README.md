@@ -56,4 +56,4 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 
 ## License
 
-ScamKicker is developed and distributed under the Apache 2.0 license.
+ScamKicker is developed and distributed under the GNU GPLv3 license.
