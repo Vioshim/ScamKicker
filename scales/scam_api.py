@@ -127,7 +127,7 @@ class ScamAPI(Scale):
                         guild.me.has_permission(Permissions.KICK_MEMBERS)
                         and (member := await guild.get_member(user.id))
                         and (owner := await guild.get_owner())
-                        and member == owner
+                        and member != owner
                         and guild.me.top_role > member.top_role
                     ):
                         with suppress(NotFound):
