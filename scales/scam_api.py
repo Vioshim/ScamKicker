@@ -24,7 +24,7 @@ from dis_snek.client import Snake
 from dis_snek.client.errors import NotFound
 from dis_snek.ext.tasks.task import Task
 from dis_snek.ext.tasks.triggers import IntervalTrigger
-from dis_snek.models.discord import Member, Message, Permissions
+from dis_snek.models.discord import Message, Permissions
 from dis_snek.models.snek import MessageContext, Scale, listen, message_command
 from orjson import dumps
 
@@ -65,7 +65,7 @@ class ScamAPI(Scale):
                 items: list[dict[str, str]] = await data.json()
                 for item in items:
                     handler = item.get("type")
-                    domains: list[str] = set(item.get("domains", []))
+                    domains: set[str] = set(item.get("domains", []))
                     if handler == "add":
                         self.scam_urls |= domains
                     elif handler == "delete":
@@ -105,40 +105,35 @@ class ScamAPI(Scale):
         message : MessageCreate
             Message to detect
         """
-        if isinstance(message := event.message, Message):
-            user = message.author
+        message: Message = event.message
 
-            if not message.content:
-                return
+        user = message.author
 
-            elements: list[str] = DOMAIN_DETECT.findall(message.content)
-            if scams := ", ".join(self.scam_urls.intersection(elements)):
-                channel = await self.bot.get_channel(message._channel_id)
-                if base_guild := message.guild:
-                    perms: Permissions = base_guild.me.channel_permissions(channel)
-                    if perms.MANAGE_MESSAGES:
-                        with suppress(NotFound):
-                            await message.delete()
+        if not message.content:
+            return
 
-                    for guild in self.bot.guilds:
-
-                        if not guild.me.has_permission(Permissions.KICK_MEMBERS):
-                            continue
-
-                        if not (member := await guild.get_member(user.id)):
-                            continue
-
-                        owner: Member = await guild.get_owner()
-
-                        if member == owner:
-                            continue
-
-                        if guild.me.top_role > member.top_role:
-                            with suppress(NotFound):
-                                await member.kick(reason=f"Nitro Scam Victim, Scam/s sent {scams}")
-                else:
+        elements: list[str] = DOMAIN_DETECT.findall(message.content)
+        if scams := ", ".join(self.scam_urls.intersection(elements)):
+            channel = await self.bot.get_channel(message._channel_id)
+            if base_guild := message.guild:
+                perms: Permissions = base_guild.me.channel_permissions(channel)
+                if perms.MANAGE_MESSAGES:
                     with suppress(NotFound):
-                        await channel.send("That's a nitro scam according to the API.", reply_to=message)
+                        await message.delete()
+
+                for guild in self.bot.guilds:
+
+                    if (
+                        guild.me.has_permission(Permissions.KICK_MEMBERS)
+                        and (member := await guild.get_member(user.id))
+                        and (owner := await guild.get_owner())
+                        and member == owner
+                        and guild.me.top_role > member.top_role
+                    ):
+                        with suppress(NotFound):
+                            await member.kick(reason=f"Nitro Scam Victim, Scam/s sent {scams}")
+                return
+            await channel.send("That's a nitro scam according to the API.", reply_to=message)
 
 
 def setup(bot: Snake) -> None:
