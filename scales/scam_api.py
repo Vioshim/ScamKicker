@@ -78,7 +78,7 @@ class ScamAPI(Scale):
                     elif handler == "delete":
                         self.scam_urls -= domains
 
-        if self.bot.activity.name != self.info:
+        if not self.bot.activity or self.bot.activity.name != self.info:
             activity = Activity.create(name=self.info, type=ActivityType.WATCHING)
             await self.bot.change_presence(activity=activity)
 
