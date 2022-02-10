@@ -122,15 +122,14 @@ class ScamAPI(Scale):
                         await message.delete()
 
                 for guild in self.bot.guilds:
-
-                    if (
-                        guild.me.has_permission(Permissions.KICK_MEMBERS)
-                        and (member := await guild.get_member(user.id))
-                        and (owner := await guild.get_owner())
-                        and member != owner
-                        and guild.me.top_role > member.top_role
-                    ):
-                        with suppress(NotFound):
+                    with suppress(NotFound):
+                        if (
+                            guild.me.has_permission(Permissions.KICK_MEMBERS)
+                            and (member := await guild.get_member(user.id))
+                            and (owner := await guild.get_owner())
+                            and member != owner
+                            and guild.me.top_role > member.top_role
+                        ):
                             await member.kick(reason=f"Nitro Scam Victim, Scam/s sent {scams}")
                 return
             await channel.send("That's a nitro scam according to the API.", reply_to=message)
