@@ -43,7 +43,9 @@ class ScamAPI(Scale):
 
     @property
     def info(self) -> str:
-        return f"{len(self.bot.guilds):02d} Servers"
+        if guilds := self.bot.guilds:
+            return f"{len(guilds):02d} Servers"
+        return "Bot restarting."
 
     def __init__(self, _: Snake) -> None:
         """This is the init method of the ScamAPI Scale
