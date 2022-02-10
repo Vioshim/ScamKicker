@@ -24,7 +24,8 @@ from dis_snek.client import Snake
 from dis_snek.client.errors import NotFound
 from dis_snek.ext.tasks.task import Task
 from dis_snek.ext.tasks.triggers import IntervalTrigger
-from dis_snek.models.discord import Message, Permissions
+from dis_snek.models.discord import Activity, Message, Permissions
+from dis_snek.models.discord.enums import ActivityType
 from dis_snek.models.snek import MessageContext, Scale, listen, message_command
 from orjson import dumps
 
@@ -39,6 +40,10 @@ DOMAIN_DETECT = compile(
 
 class ScamAPI(Scale):
     """Test Scale used for testing the api"""
+
+    @property
+    def info(self) -> str:
+        return f"{len(self.bot.guilds):02d} Servers"
 
     def __init__(self, _: Snake) -> None:
         """This is the init method of the ScamAPI Scale
@@ -71,6 +76,10 @@ class ScamAPI(Scale):
                     elif handler == "delete":
                         self.scam_urls -= domains
 
+        if self.bot.activity.name != self.info:
+            activity = Activity.create(name=self.info, type=ActivityType.WATCHING)
+            await self.bot.change_presence(activity=activity)
+
     @listen()
     async def on_ready(self) -> None:
         """Function loads all entries from the API and starts the Task"""
@@ -93,8 +102,10 @@ class ScamAPI(Scale):
         ctx : MessageContext
             Message Context
         """
-        text = f"Servers: {len(self.bot.guilds):02d}, Entries: {len(self.scam_urls):04d}"
-        await ctx.send(content=text, reply_to=ctx.message)
+        await ctx.send(
+            content=f"{self.info}, {len(self.scam_urls):04d} Scam Entries.",
+            reply_to=ctx.message,
+        )
 
     @listen()
     async def on_message_create(self, event: MessageCreate) -> None:
