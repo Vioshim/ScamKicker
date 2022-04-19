@@ -18,12 +18,12 @@ from contextlib import suppress
 from os import getenv
 from re import IGNORECASE, MULTILINE, compile
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ClientResponseError
 from dis_snek.api.events.discord import MessageCreate
 from dis_snek.client import Snake
 from dis_snek.client.errors import NotFound
-from dis_snek.ext.tasks.task import Task
-from dis_snek.ext.tasks.triggers import IntervalTrigger
+from dis_snek.models.snek.tasks.task import Task
+from dis_snek.models.snek.tasks.triggers import IntervalTrigger
 from dis_snek.models.discord import Activity, Message, Permissions
 from dis_snek.models.discord.enums import ActivityType
 from dis_snek.models.snek import MessageContext, Scale, listen, message_command
@@ -67,16 +67,25 @@ class ScamAPI(Scale):
 
     async def scam_changes(self) -> None:
         """Function to load API Changes in the last 60 seconds"""
-        async with self.session.get(f"{API}/recent/60", params=API_PARAM) as data:
-            if data.status == 200:
-                items: list[dict[str, str]] = await data.json()
-                for item in items:
-                    handler = item.get("type")
-                    domains: set[str] = set(item.get("domains", []))
-                    if handler == "add":
-                        self.scam_urls |= domains
-                    elif handler == "delete":
-                        self.scam_urls -= domains
+        if not self.scam_urls:
+            URL = f"{API}/all"
+        else:
+            URL = f"{API}/recent/60"
+        
+        with suppress(ClientResponseError):
+            async with self.session.get(URL, params=API_PARAM) as data:
+                if data.status == 200:
+                    entries: list[dict[str, str] | str] = await data.json()
+                    if all(isinstance(x, str) for x in entries):
+                        self.scam_urls = set(entries)
+                    else:
+                        for item in entries:
+                            handler = item.get("type")
+                            domains: set[str] = set(item.get("domains", []))
+                            if handler == "add":
+                                self.scam_urls |= domains
+                            elif handler == "delete":
+                                self.scam_urls -= domains
 
         if not self.bot.activity or self.bot.activity.name != self.info:
             activity = Activity.create(name=self.info, type=ActivityType.WATCHING)
@@ -85,15 +94,7 @@ class ScamAPI(Scale):
     @listen()
     async def on_ready(self) -> None:
         """Function loads all entries from the API and starts the Task"""
-        if not self.scam_urls:
-            async with self.session.get(
-                f"{API}/all",
-                params=API_PARAM,
-            ) as data:
-                if data.status == 200:
-                    entries: list[str] = await data.json()
-                    self.scam_urls = set(entries)
-            self.task.start()
+        self.task.start()
 
     @message_command()
     async def stats(self, ctx: MessageContext) -> None:
@@ -127,7 +128,7 @@ class ScamAPI(Scale):
 
         elements: list[str] = DOMAIN_DETECT.findall(message.content)
         if scams := ", ".join(self.scam_urls.intersection(elements)):
-            channel = await self.bot.get_channel(message._channel_id)
+            channel = message.channel
             if base_guild := message.guild:
                 perms: Permissions = base_guild.me.channel_permissions(channel)
                 if perms.MANAGE_MESSAGES:
@@ -138,8 +139,8 @@ class ScamAPI(Scale):
                     with suppress(NotFound):
                         if (
                             guild.me.has_permission(Permissions.KICK_MEMBERS)
-                            and (member := await guild.get_member(user.id))
-                            and (owner := await guild.get_owner())
+                            and (member := guild.get_member(user.id))
+                            and (owner := guild.get_owner())
                             and member != owner
                             and guild.me.top_role > member.top_role
                         ):
