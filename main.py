@@ -14,25 +14,43 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from asyncio import run
+from logging import getLogger, setLoggerClass
 from os import getenv
 
-from dis_snek import Intents, Snake
+from aiohttp import ClientSession
 from dotenv import load_dotenv
+from orjson import dumps
+
+from classes.logger import ColoredLogger
+from classes.scam_kicker import ScamKicker
+
+load_dotenv()
+setLoggerClass(ColoredLogger)
+logger = getLogger(__name__)
 
 try:
     from uvloop import install  # type: ignore
 
     install()
 except ModuleNotFoundError:
-    print("Launched without uvloop")
-finally:
-    load_dotenv()
+    logger.warning("Launched without uvloop")
 
-intents = Intents.MESSAGES | Intents.GUILD_MEMBERS | Intents.GUILDS | Intents.GUILD_BANS
 
-bot = Snake(
-    default_prefix="sk!",
-    intents=intents,
-)
-bot.load_extension("scales.scam_api")
-bot.start(getenv("DISCORD_TOKEN"))
+async def main():
+    """Main Execution function"""
+    try:
+        async with ClientSession(
+            json_serialize=dumps,
+            raise_for_status=True,
+            headers={"X-Identity": getenv("API_LABEL", "ScamKicker")},
+        ) as session:
+            bot = ScamKicker(session=session)
+            bot.load_extension("scales.scam_api")
+            await bot.astart(token=getenv("DISCORD_TOKEN"))
+    except Exception as e:
+        logger.critical("An exception occurred while trying to connect.", exc_info=e)
+
+
+if __name__ == "__main__":
+    run(main())
