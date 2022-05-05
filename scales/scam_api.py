@@ -112,10 +112,11 @@ class ScamAPI(Scale):
                             added.update(domains)
                         case "delete":
                             removed.add(domains)
-                logger.info(
-                    "%s URL Change(s) have occurred in the last 60 seconds.",
-                    len(entries),
-                )
+                if entries:
+                    logger.info(
+                        "%s URL Change(s) have occurred in the last 60 seconds.",
+                        len(entries),
+                    )
                 if added:
                     self.scam_urls.update(added)
                     logger.info(
