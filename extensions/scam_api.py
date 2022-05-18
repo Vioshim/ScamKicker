@@ -213,7 +213,7 @@ class ScamAPI(Extension):
                     footer=EmbedFooter(text="Results obtained directly by the API"),
                 )
             )
-            logger.info("% checked for the URL(s): %s", str(message.author), scams)
+            logger.info("%s checked for the URL(s): %s", str(message.author), scams)
         elif channel := message.channel:
             if base_guild.me.channel_permissions(channel).MANAGE_MESSAGES:
                 try:
