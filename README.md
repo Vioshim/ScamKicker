@@ -1,6 +1,6 @@
 # ScamKicker
 
-A simple bot which using an API , detects reported discord scams and kicks the user if possible while deleting the message. This bot was created using [dis-snek](https://github.com/Discord-Snake-Pit/Dis-Snek.git) (dev branch).
+A simple bot which using an API , detects reported discord scams and kicks the user if possible while deleting the message. This bot was created using [NAFF](https://github.com/Discord-Snake-Pit/NAFF/tree/dev) (dev branch).
 
 ## How to Use?
 
@@ -10,7 +10,6 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 
 [![Discord Bots](https://top.gg/api/widget/851246867131793469.svg)](https://top.gg/bot/851246867131793469)
 
-
 ## FAQ
 
 <details closed>
@@ -18,6 +17,7 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 <p>
 
 > Yes, just DM the bot the URL you want to inspect and if it's included in the database, then it will reply back that it was found. If you want to report an url, it's recommended to go to the [API's Discord server](https://discord.gg/cT6eQjWW8H)
+
 </p>
 </details>
 
@@ -26,6 +26,7 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 <p>
 
 > In such case, as expected if the bot has permissions it will remove the messages but won't kick the user (it can't).
+
 </p>
 </details>
 <details closed>
@@ -33,6 +34,7 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 <p>
 
 > The issue with nitro scam is more about the clickable urls than sending the directions themselves. This bot will detect the scams which start with `http://`, after all without that part, discord doesn't convert the message to an URL, which decreases its risk by default and prevents us to kick false positives. Additonally it's reliant on the API.
+
 </p>
 </details>
 
@@ -41,6 +43,7 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 <p>
 
 > No, this bot activates upon messages and from there it makes decisions, if the bot wasn't there, then it won't delete the messages when it wasn't present.
+
 </p>
 </details>
 
@@ -50,6 +53,7 @@ Simply add the bot to your server and you're done, make sure that the bot has pe
 
 > The API used in the bot, was designed by [nwunder](https://nwunder.com/).
 > Feel free to check the following link for [more information](https://api.sinking.yachts/docs).
+
 </p>
 </details>
 <br>

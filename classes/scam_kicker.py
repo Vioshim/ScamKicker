@@ -15,18 +15,18 @@
 
 
 from aiohttp import ClientSession
-from dis_snek import Intents, Snake
+from naff.client.client import Client
+from naff.models.discord.enums import Intents
 
 
-class ScamKicker(Snake):
-
+class ScamKicker(Client):
     def __init__(self, session: ClientSession) -> None:
         """Init Method
 
         Parameters
         ----------
-        token : str
-            Bot's token
+        session : ClientSession
+            aiohttp client session
         """
         super(ScamKicker, self).__init__(
             intents=(
@@ -35,6 +35,6 @@ class ScamKicker(Snake):
                 | Intents.GUILDS
                 | Intents.GUILD_BANS
             ),
-            default_prefix="sk!"
+            default_prefix="sk!",
         )
         self.session = session

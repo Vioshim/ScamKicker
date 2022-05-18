@@ -19,24 +19,19 @@ from logging import getLogger, setLoggerClass
 from re import IGNORECASE, MULTILINE, compile
 
 from aiohttp import ClientResponseError, ClientSession
-from dis_snek.api.events.discord import MessageCreate
-from dis_snek.client import Snake
-from dis_snek.client.errors import NotFound
-from dis_snek.models.discord import Activity, Message
-from dis_snek.models.discord.color import FlatUIColors
-from dis_snek.models.discord.embed import (
-    Embed,
-    EmbedAttachment,
-    EmbedField,
-    EmbedFooter,
-)
-from dis_snek.models.discord.enums import ActivityType, Permissions
-from dis_snek.models.snek.context import PrefixedContext
-from dis_snek.models.snek.listener import listen
-from dis_snek.models.snek.prefixed_commands import prefixed_command
-from dis_snek.models.snek.scale import Scale
-from dis_snek.models.snek.tasks.task import Task
-from dis_snek.models.snek.tasks.triggers import IntervalTrigger
+from naff.api.events.discord import MessageCreate
+from naff.client import Client
+from naff.client.errors import NotFound
+from naff.models.discord import Activity, Message
+from naff.models.discord.color import FlatUIColors
+from naff.models.discord.embed import Embed, EmbedAttachment, EmbedField, EmbedFooter
+from naff.models.discord.enums import ActivityType, Permissions
+from naff.models.naff.context import PrefixedContext
+from naff.models.naff.extension import Extension
+from naff.models.naff.listener import listen
+from naff.models.naff.prefixed_commands import prefixed_command
+from naff.models.naff.tasks.task import Task
+from naff.models.naff.tasks.triggers import IntervalTrigger
 from yarl import URL
 
 from classes.logger import ColoredLogger
@@ -55,10 +50,10 @@ DOMAIN_DETECT = compile(
 )
 
 
-class ScamAPI(Scale):
-    """Scale used for detection of popular reported discord scams."""
+class ScamAPI(Extension):
+    """Extension used for detection of popular reported discord scams."""
 
-    def __init__(self, _: Snake) -> None:
+    def __init__(self, _: Client) -> None:
         """This is the init method of the ScamAPI Scale
 
         Parameters
@@ -169,8 +164,16 @@ class ScamAPI(Scale):
                 thumbnail=EmbedAttachment(url=self.bot.user.avatar.url),
                 color=FlatUIColors.CONCRETE,
                 fields=[
-                    EmbedField(name="Servers", value=str(len(self.bot.guilds)), inline=True),
-                    EmbedField(name="Scam Entries", value=str(len(self.scam_urls)), inline=True),
+                    EmbedField(
+                        name="Servers",
+                        value=str(len(self.bot.guilds)),
+                        inline=True,
+                    ),
+                    EmbedField(
+                        name="Scam Entries",
+                        value=str(len(self.scam_urls)),
+                        inline=True,
+                    ),
                 ],
                 footer=EmbedFooter(text="Results obtained directly by the API"),
             )
@@ -197,6 +200,7 @@ class ScamAPI(Scale):
         if not intersection:
             return
 
+        scams = ", ".join(intersection)
         if not (base_guild := message.guild):
             await message.reply(
                 embed=Embed(
@@ -209,26 +213,38 @@ class ScamAPI(Scale):
                     footer=EmbedFooter(text="Results obtained directly by the API"),
                 )
             )
-        else:
-            if base_guild.me.has_permission(Permissions.MANAGE_MESSAGES):
-                with suppress(NotFound):
+            logger.info("% checked for the URL(s): %s", str(message.author), scams)
+        elif channel := message.channel:
+            if base_guild.me.channel_permissions(channel).MANAGE_MESSAGES:
+                try:
                     await message.delete()
-
-            scams = ", ".join(intersection)
+                except NotFound:
+                    pass
+                else:
+                    logger.info(
+                        "Deleted %s(%s)' message at Guild: %s(%s), Channel: %s, ID: %s, Scams: %s",
+                        str(message.author),
+                        message.author.id,
+                        base_guild.name,
+                        base_guild.id,
+                        message.channel.id,
+                        message.id,
+                        scams,
+                    )
+            logger.info("Kicking %s(%s) from all servers.", str(user), user.id)
             for guild in self.bot.guilds:
                 with suppress(NotFound):
                     if (
                         guild.me.has_permission(Permissions.KICK_MEMBERS)
-                        and (member := guild.get_member(user.id))
                         and (owner := guild.get_owner())
-                        and member != owner
-                        and guild.me.top_role > member.top_role
+                        and user != owner
+                        and guild.me.top_role > user.top_role
                     ):
                         reason = f"Nitro Scam Victim, Scam(s) sent: {scams}"
-                        await member.kick(reason=reason)
+                        await user.kick(reason=reason)
 
 
-def setup(bot: Snake) -> None:
+def setup(bot: Client) -> None:
     """Set up Function
 
     Parameters

@@ -1,6 +1,6 @@
-# Scales/
+# Extensions/
 
-Scales which contain the bot's core functions.
+Extensions which contain the bot's core functions.
 
 | File          | Description         |
 | ------------- | ------------------- |

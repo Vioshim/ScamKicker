@@ -46,7 +46,7 @@ async def main():
             headers={"X-Identity": getenv("API_LABEL", "ScamKicker")},
         ) as session:
             bot = ScamKicker(session=session)
-            bot.load_extension("scales.scam_api")
+            bot.load_extension("extensions.scam_api")
             await bot.astart(token=getenv("DISCORD_TOKEN"))
     except Exception as e:
         logger.critical("An exception occurred while trying to connect.", exc_info=e)

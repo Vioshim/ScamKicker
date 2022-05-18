@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scamkicker"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Discord bot that kicks scam victims."
 authors = ["Vioshim <Krangelj@unicartagena.edu.co>"]
 license = "GPL-3.0"
@@ -12,7 +12,7 @@ isort = {version = "^5.10.1", extras = ["requirements_deprecated_finder", "pipfi
 python-dotenv = "^0.20.0"
 orjson = "^3.6.8"
 pytz = "^2022.1"
-dis-snek = {git = "https://github.com/Discord-Snake-Pit/Dis-Snek.git", rev = "dev"}
+naff = {git = "https://github.com/Discord-Snake-Pit/NAFF.git", rev = "dev"}
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}

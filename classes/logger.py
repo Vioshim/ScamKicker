@@ -105,15 +105,17 @@ class ColoredFormatter(Formatter):
         """
         level_name: str = record.levelname
         if self.use_color and level_name in COLORS:
-            level_name_color: str = COLOR_SEQ % (30 + COLORS[level_name]) + level_name + RESET_SEQ
-            record.levelname = level_name_color
+            level_name_color = COLOR_SEQ % (30 + COLORS[level_name]) + level_name
+            record.levelname = level_name_color + RESET_SEQ
             pathname = record.pathname.removesuffix(".py")
             record.pathname = pathname.removeprefix("/app")
         return super(ColoredFormatter, self).format(record)
 
 
 class ColoredLogger(Logger):
-    FORMAT = "$BOLD[%(levelname)s]$RESET%(pathname)s/$BOLD%(funcName)s$RESET〕%(message)s"
+    FORMAT = (
+        "$BOLD[%(levelname)s]$RESET%(pathname)s/$BOLD%(funcName)s$RESET〕%(message)s"
+    )
     COLOR_FORMAT = formatter_message(FORMAT, True)
 
     def __init__(self, name: str):
