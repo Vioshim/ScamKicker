@@ -1,6 +1,6 @@
 # ScamKicker
 
-A simple bot which using an API , detects reported discord scams and kicks the user if possible while deleting the message. This bot was created using [dis-snek](https://github.com/Discord-Snake-Pit/Dis-Snek.git) (dev branch).
+A simple bot which using an API , detects reported discord scams and kicks the user if possible while deleting the message. This bot was created using [NAFF](https://github.com/Discord-Snake-Pit/NAFF/tree/dev) (dev branch).
 
 ## How to Use?
 
