@@ -2,20 +2,23 @@
 name = "scamkicker"
 version = "0.1.2"
 description = "A Discord bot that kicks scam victims."
-authors = ["Vioshim <Krangelj@unicartagena.edu.co>"]
+authors = ["Vioshim <krangelj@unicartagena.edu.co>"]
 license = "GPL-3.0"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-uvloop = {version = "^0.16.0", platform = "linux"}
-isort = {version = "^5.10.1", extras = ["requirements_deprecated_finder", "pipfile_deprecated_finder"]}
+uvloop = { version = "^0.16.0", platform = "linux" }
+isort = { version = "^5.10.1", extras = [
+    "requirements_deprecated_finder",
+    "pipfile_deprecated_finder",
+] }
 python-dotenv = "^0.20.0"
 orjson = "^3.6.8"
 pytz = "^2022.1"
-naff = {git = "https://github.com/Discord-Snake-Pit/NAFF.git", rev = "dev"}
+naff = { git = "https://github.com/Discord-Snake-Pit/NAFF.git", rev = "dev" }
 
 [tool.poetry.dev-dependencies]
-black = {version = "^22.3.0", allow-prereleases = true}
+black = { version = "^22.3.0", allow-prereleases = true }
 flake8 = "^4.0.1"
 
 [tool.black]
@@ -37,7 +40,7 @@ exclude = '''
 '''
 
 [tool.isort]
-profile = "black" 
+profile = "black"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
