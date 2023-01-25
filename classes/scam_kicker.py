@@ -30,7 +30,8 @@ class ScamKicker(Client):
         """
         super(ScamKicker, self).__init__(
             intents=(
-                Intents.MESSAGES
+                Intents.GUILD_MESSAGE_CONTENT
+                | Intents.MESSAGES
                 | Intents.GUILD_MEMBERS
                 | Intents.GUILDS
                 | Intents.GUILD_BANS
