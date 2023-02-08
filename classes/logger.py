@@ -45,11 +45,10 @@ def formatter_message(message: str, use_color=True) -> str:
     """
     if use_color:
         message = message.replace("$RESET", RESET_SEQ)
-        message = message.replace("$BOLD", BOLD_SEQ)
+        return message.replace("$BOLD", BOLD_SEQ)
     else:
         message = message.replace("$RESET", "")
-        message = message.replace("$BOLD", "")
-    return message
+        return message.replace("$BOLD", "")
 
 
 COLORS = dict(
